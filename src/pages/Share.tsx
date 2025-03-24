@@ -7,11 +7,12 @@ const Share: React.FC = () => {
         <IonPage>
             <IonHeader>
                 <IonToolbar>
+                    
                     <IonTitle>Secure Sharing</IonTitle>
                 </IonToolbar>
             </IonHeader>
             <IonContent className="ion-padding">
-                Blockcain technologie secure sharing
+                Blockchain technologies secure sharing
             </IonContent>
         </IonPage>
     );

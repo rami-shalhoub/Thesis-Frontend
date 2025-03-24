@@ -7,6 +7,7 @@ const Settings: React.FC = () => {
         <IonPage>
             <IonHeader>
                 <IonToolbar>
+                    
                     <IonTitle>Setting page</IonTitle>
                 </IonToolbar>
             </IonHeader>

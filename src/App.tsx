@@ -37,11 +37,11 @@ setupIonicReact();
 
 const App: React.FC = () => (
   <IonApp>
-    <IonReactRouter basename='/app'>
-      <IonRouterOutlet>
-        <Route component={Menu} path={"/"}/>
-      </IonRouterOutlet>
-    </IonReactRouter>
+      <IonReactRouter basename='/app'>
+        <IonRouterOutlet>
+          <Route component={Menu} path={"/"}/>
+        </IonRouterOutlet>
+      </IonReactRouter>
   </IonApp>
 );
 
