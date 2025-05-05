@@ -17,7 +17,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ triggerID }) => {
                     <IonSegmentButton value="Register" contentId='Register'> Register</IonSegmentButton>
                 </IonSegment>
                 <IonSegmentView >
-                    <IonSegmentContent id='Signin'>
+                    <IonSegmentContent id='Signin' style={{ margin: '60px' }}>
                         <Signin></Signin>
                     </IonSegmentContent>
                     <IonSegmentContent id='Register'>

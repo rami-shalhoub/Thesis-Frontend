@@ -13,7 +13,7 @@ const BottomMenu: React.FC = () => {
     return (
         <>
             <IonPage id='main'>
-                //& Bottom tab bar to open the side menu, AI chat, and the secure share
+                {/* //& Bottom tab bar to open the side menu, AI chat, and the secure share */}
                 <IonTabs>
                     {/*//^ Tab Bar */}
                     <IonTabBar slot="bottom">

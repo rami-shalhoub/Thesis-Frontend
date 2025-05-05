@@ -2,9 +2,9 @@
 //* it will be always opened on big screens and it can be opened and closed on small screens
 //* it contains the Chat page with the chat history, the Secure Share page , User signin logout, and the settings page*/
 import {
-	IonButton, IonContent, IonHeader, IonIcon, IonItem, IonItemDivider,
+	IonButton, IonCol, IonContent, IonGrid, IonHeader, IonIcon, IonItem, IonItemDivider,
 	IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonMenu,
-	IonMenuToggle, IonPopover, IonSearchbar,
+	IonMenuToggle, IonPopover, IonRow, IonSearchbar,
 	IonSplitPane, IonTitle, IonToolbar
 }
 	from '@ionic/react';
@@ -62,11 +62,21 @@ const Menu: React.FC = () => {
 						</IonToolbar>
 					</IonHeader>
 					
-					
-
 					{/* //& Chat History  */}
-					<IonContent>						
-						<IonTitle color={'tertiary'} className='ion-padding'>Chat History</IonTitle>
+					<IonContent>
+                  <IonGrid>
+                     <IonRow>
+                        <IonCol>
+                           <IonTitle color={'tertiary'} className='ion-padding'>Chat History</IonTitle>
+                        </IonCol>
+                        <IonCol offset='3' className='ion-padding-top'>
+                            <IonButton color={'danger'}>
+                              <IonIcon icon={trashBin}></IonIcon>
+                           </IonButton>
+                        </IonCol>
+                     </IonRow>
+                  </IonGrid>						
+                  
 						{/* //^ Search Bar */}
 						<IonSearchbar
 							color={'light'}
@@ -117,29 +127,30 @@ const Menu: React.FC = () => {
 					</IonButton><br/>
 					<IonPopover trigger="cover-trigger" size="auto" side='right' backdropDismiss={true} dismissOnSelect={true}>
 						{/* //^ Login in Button  */}
-						<IonButton fill='clear' expand='block' onClick={() => document.getElementById('open-login-modal')?.click()}>
+						<IonButton fill='solid' expand='block' onClick={() => document.getElementById('open-login-modal')?.click()}>
 							<IonIcon slot='icon-only' icon={personCircle} />
 							Login
 						</IonButton>
 
 						{/* //^ Settings button */}
 						<IonMenuToggle autoHide={false}>
-							<IonItem routerLink='/settings' routerDirection='none'>
+                     <IonButton fill='solid' expand='block' routerLink='/settings' routerDirection='none'>
 								<IonIcon icon={settings} />
-								settings
-							</IonItem>
+                        Settings
+                     </IonButton>
 						</IonMenuToggle>
 
 						{/* //^ Log out button */}
 						<IonMenuToggle autoHide={false}>
-							<IonButton expand='full' routerLink="/" routerDirection='root'>
+							<IonButton fill='clear' expand='full' routerLink="/" routerDirection='root'>
 								<IonIcon slot='start' icon={logOutOutline} />
 								Logout
 							</IonButton>
 						</IonMenuToggle>
 					</IonPopover>
+
 					{/* //^ Hidden Login button to open the Login Modal while the Popover closes */}
-					<IonButton id='open-login-modal' fill='clear' expand='block' style={{ display: 'none' }}>
+					<IonButton id='open-login-modal' fill='clear' expand='block' className='ion-hide'>
 						<IonIcon slot='icon-only' icon={personCircle} />
 						Sign in
 						<LoginModal triggerID='open-login-modal'></LoginModal>
