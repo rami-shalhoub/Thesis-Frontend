@@ -31,17 +31,17 @@ import '@ionic/react/css/palettes/dark.system.css';
 
 /* Theme variables */
 import './theme/variables.css';
-import Menu from './pages/Menu';
+import BottomMenu from './components/menue/BottomMenu';
 
 setupIonicReact();
 
 const App: React.FC = () => (
   <IonApp>
-      <IonReactRouter basename='/app'>
-        <IonRouterOutlet>
-          <Route component={Menu} path={"/"}/>
-        </IonRouterOutlet>
-      </IonReactRouter>
+    <IonReactRouter basename='/app'>
+      <IonRouterOutlet>
+        <Route component={BottomMenu} path={"/"} />
+      </IonRouterOutlet>
+    </IonReactRouter>
   </IonApp>
 );
 

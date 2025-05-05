@@ -1,2 +1,18 @@
 /* For information on how to create your own theme, please see:
 http://ionicframework.com/docs/theming/ */
+/* src/theme/variables.css or global.css */
+@font-face {
+    font-family: 'Cascadia code';
+    src: url('/public/Signika-SemiBold.ttf') format('ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+:root {
+    --ion-font-family: 'Signika SemiBold', sans-serif;
+}
+
+body,
+ion-app {
+    font-family: var(--ion-font-family);
+}

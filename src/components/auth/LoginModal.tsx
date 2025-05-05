@@ -1,14 +1,14 @@
 import { IonModal, IonPage, IonSegment, IonSegmentButton, IonSegmentContent, IonSegmentView } from '@ionic/react';
 import React from 'react';
-import './CSS/LoginModal.css'
-import Signin from '../components/Signin';
-import Register from '../components/Register';
+import './LoginModal.css'
+import Signin from './Signin';
+import Register from './Register';
 
 interface LoginModalProps {
-  triggerID: string; 
+    triggerID: string;
 }
 
-const LoginModal: React.FC<LoginModalProps> = ({triggerID}) => {
+const LoginModal: React.FC<LoginModalProps> = ({ triggerID }) => {
     return (
         <IonPage>
             <IonModal id='floating-modal' trigger={triggerID}>

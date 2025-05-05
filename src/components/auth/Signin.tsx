@@ -1,7 +1,7 @@
 import { IonButton, IonCardContent, IonCol, IonGrid, IonIcon, IonInput, IonRow, IonTitle } from '@ionic/react';
 import {logInOutline} from 'ionicons/icons';
 import React from 'react';
-import './CSS/Signin.css'
+import './Signin.css'
 
 
 const Signin: React.FC= () => {
