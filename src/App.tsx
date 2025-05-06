@@ -1,6 +1,7 @@
 import { Route } from 'react-router-dom';
 import { IonApp, IonRouterOutlet, setupIonicReact } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
+import { AuthProvider } from './context/AuthContext';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -33,16 +34,19 @@ import '@ionic/react/css/palettes/dark.system.css';
 import './theme/variables.css';
 import BottomMenu from './components/menu/BottomMenu';
 
+
 setupIonicReact();
 
 const App: React.FC = () => (
-  <IonApp>
-    <IonReactRouter basename='/app'>
-      <IonRouterOutlet>
-        <Route component={BottomMenu} path={"/"} />
-      </IonRouterOutlet>
-    </IonReactRouter>
-  </IonApp>
+   <AuthProvider>
+      <IonApp>
+         <IonReactRouter basename='/app'>
+            <IonRouterOutlet>
+               <Route component={BottomMenu}  />
+            </IonRouterOutlet>
+         </IonReactRouter>
+      </IonApp>
+   </AuthProvider>
 );
 
 export default App;

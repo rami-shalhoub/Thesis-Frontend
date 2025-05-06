@@ -1,22 +1,101 @@
-import { IonButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonCol, IonGrid, IonIcon, IonInput, IonInputPasswordToggle, IonPage, IonRow } from '@ionic/react';
+import { IonButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonCol, IonGrid, IonIcon, IonInput, IonPage, IonRow, useIonRouter } from '@ionic/react';
 import { pencil, save, trashBin } from 'ionicons/icons';
 import './CSS/Settings.css';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { useErrorHandler } from '../APIs/ErrorHandler';
 
 const Settings: React.FC = () => {
-   const organisation: string = 'ClientOrg';
-   const role: string = 'Client';
-   const name: string = 'John Doe';
-   const email: string = 'john@example.com';
-   const password: string = 'password123';
+   const { user, updateUser, deleteUser, isAuthenticated } = useAuth();
+   const { ErrorToastComponent, showToast } = useErrorHandler();
+   const router = useIonRouter();
+   
+   const [formData, setFormData] = useState({
+      name: '',
+      email: '',
+      password: '',
+      organisationID: '',
+      role: ''
+   });
    const [isEditMode, setIsEditMode] = useState(false);
+   const [isLoading, setIsLoading] = useState(false);
+   const [isDeleting, setIsDeleting] = useState(false);
+
+   // Redirect if not authenticated
+   useEffect(() => {
+      if (!isAuthenticated) {
+         router.push('/chat', 'root');
+      }
+   }, [isAuthenticated, router]);
+
+   // Load user data when component mounts
+   useEffect(() => {
+      if (user) {
+         setFormData({
+            name: user.name,
+            email: user.email,
+            password: '********', // Placeholder for password
+            organisationID: user.organisationID,
+            role: user.role
+         });
+      }
+   }, [user]);
+
+   const handleChange = (field: string, value: string) => {
+      setFormData({
+         ...formData,
+         [field]: value
+      });
+   };
 
    const handleEditClick = () => {
       setIsEditMode(true);
    };
 
-   const handleSaveClick = () => {
-      setIsEditMode(false);
+   const handleSaveClick = async () => {
+      if (!user) return;
+
+      setIsLoading(true);
+      try {
+         // Only send fields that have changed
+         const updateData: {
+            name?: string;
+            email?: string;
+            organisationID?: string;
+         } = {};
+
+         if (formData.name !== user.name || formData.email !== user.email || formData.organisationID !== user.organisationID) {
+            updateData.name = formData.name;
+            updateData.email = formData.email;
+            updateData.organisationID = formData.organisationID;
+         }
+         // Only make API call if there are changes
+         if (Object.keys(updateData).length > 0) {
+            await updateUser(user.userId, updateData);
+            showToast('User information updated successfully');
+         }
+
+         setIsEditMode(false);
+      } catch (error) {
+         console.error('Failed to update user:', error);
+      } finally {
+         setIsLoading(false);
+      }
+   };
+
+   const handleDeleteAccount = async () => {
+      if (!user) return;
+
+      if (window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+         setIsDeleting(true);
+         try {
+            await deleteUser(user.userId);
+            // Redirect will happen automatically due to auth state change
+         } catch (error) {
+            console.error('Failed to delete account:', error);
+            setIsDeleting(false);
+         }
+      }
    };
 
 
@@ -27,54 +106,108 @@ const Settings: React.FC = () => {
                <IonCardTitle className='ion-text-center'>Settings</IonCardTitle>
             </IonCardHeader>
             <IonCardContent>
-               <IonGrid>
-                  <IonRow>
-                     <IonCol>
-                        <IonInput className="ion-margin-bottom" labelPlacement='floating' label='Organisation' type='text' fill='solid' value={organisation} disabled={true}></IonInput>
-                     </IonCol>
-                     <IonCol>
-                        <IonInput className='ion-margin-bottom' label='Role' labelPlacement='floating' type='text' fill='solid' value={role} disabled={true} color='danger'></IonInput>
-                     </IonCol>
-                  </IonRow>
-                  <IonRow>
-                     <IonInput className="ion-margin-botoom" labelPlacement='floating' label='User Name' type='text' fill='solid' value={name} disabled={!isEditMode}></IonInput>
-                     <IonInput className="ion-margin-top" labelPlacement='floating' label='Email' type='email' fill='solid' value={email} disabled={!isEditMode}></IonInput>
-                     <IonInput className="ion-margin-top" labelPlacement='floating' label='Password' type='password' fill='solid' value={password} disabled={!isEditMode}>
-                        <IonInputPasswordToggle slot="end"></IonInputPasswordToggle>
-                     </IonInput>
-                  </IonRow>
-                  <IonRow>
-                     <IonCol>
-                        <IonButton 
-                           type='submit' 
+               {user && (
+                  <IonGrid>
+                     <IonRow>
+                        <IonCol>
+                           <IonInput 
+                              className="ion-margin-bottom" 
+                              labelPlacement='floating' 
+                              label='Organisation' 
+                              type='text' 
+                              fill='solid' 
+                              value={formData.organisationID} 
+                              disabled={!isEditMode}
+                              onIonInput={(e) => handleChange('organisationID', e.detail.value || '')}
+                           ></IonInput>
+                        </IonCol>
+                        <IonCol>
+                           <IonInput 
+                              className='ion-margin-bottom' 
+                              label='Role' 
+                              labelPlacement='floating' 
+                              type='text' 
+                              fill='solid' 
+                              value={formData.role} 
+                              disabled={true} 
+                              color='danger'
+                           ></IonInput>
+                        </IonCol>
+                     </IonRow>
+                     <IonRow>
+                        <IonInput 
+                           className="ion-margin-botoom" 
+                           labelPlacement='floating' 
+                           label='User Name' 
+                           type='text' 
+                           fill='solid' 
+                           value={formData.name} 
+                           disabled={!isEditMode}
+                           onIonInput={(e) => handleChange('name', e.detail.value || '')}
+                        ></IonInput>
+                        <IonInput 
                            className="ion-margin-top" 
-                           style={{ display: isEditMode ? 'none' : 'inline-flex' }}
-                           onClick={handleEditClick}
-                        >
-                           Edit
-                           <IonIcon icon={pencil} slot='end' />
-                        </IonButton>
-                        <IonButton 
-                           type='submit' 
+                           labelPlacement='floating' 
+                           label='Email' 
+                           type='email' 
+                           fill='solid' 
+                           value={formData.email} 
+                           disabled={!isEditMode}
+                           onIonInput={(e) => handleChange('email', e.detail.value || '')}
+                        ></IonInput>
+                        {/* <IonInput 
                            className="ion-margin-top" 
-                           style={{ display: isEditMode ? 'inline-flex' : 'none' }}
-                           onClick={handleSaveClick}
+                           labelPlacement='floating' 
+                           label='Password' 
+                           type='password' 
+                           fill='solid' 
+                           value={formData.password} 
+                           disabled={true} // Password can't be edited directly
                         >
-                           Save
-                           <IonIcon icon={save} slot='end' />
-                        </IonButton>
-                     </IonCol>
-                     <IonCol offset='8'>
-                        <IonButton type='submit' expand='block' className="ion-margin-top" color='danger' disabled={isEditMode}>
-                           Delete Account
-                           <IonIcon icon={trashBin} slot='end' />
-                        </IonButton>
-                     </IonCol>
-                  </IonRow>
-               </IonGrid>
-
+                           <IonInputPasswordToggle slot="end"></IonInputPasswordToggle>
+                        </IonInput> */}
+                     </IonRow>
+                     <IonRow>
+                        <IonCol>
+                           <IonButton 
+                              type='button' 
+                              className="ion-margin-top" 
+                              style={{ display: isEditMode ? 'none' : 'inline-flex' }}
+                              onClick={handleEditClick}
+                           >
+                              Edit
+                              <IonIcon icon={pencil} slot='end' />
+                           </IonButton>
+                           <IonButton 
+                              type='button' 
+                              className="ion-margin-top" 
+                              style={{ display: isEditMode ? 'inline-flex' : 'none' }}
+                              onClick={handleSaveClick}
+                              disabled={isLoading}
+                           >
+                              {isLoading ? 'Saving...' : 'Save'}
+                              <IonIcon icon={save} slot='end' />
+                           </IonButton>
+                        </IonCol>
+                        <IonCol offset='8'>
+                           <IonButton 
+                              type='button' 
+                              expand='block' 
+                              className="ion-margin-top" 
+                              color='danger' 
+                              disabled={isEditMode || isDeleting}
+                              onClick={handleDeleteAccount}
+                           >
+                              {isDeleting ? 'Deleting...' : 'Delete Account'}
+                              <IonIcon icon={trashBin} slot='end' />
+                           </IonButton>
+                        </IonCol>
+                     </IonRow>
+                  </IonGrid>
+               )}
             </IonCardContent>
          </IonCard>
+         <ErrorToastComponent />
       </IonPage>
    );
 };

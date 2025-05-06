@@ -38,20 +38,72 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
+    
+    // Debug token being used in requests
+    console.log('Using token for Chat API request:', token);
+    
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+    } else {
+      console.warn('No token found in localStorage for Chat API request');
     }
     return config;
   },
   (error) => {
+    console.error('Chat API request interceptor error:', error);
     return Promise.reject(error);
   }
 );
 
 // Add response interceptor for global error handling
 api.interceptors.response.use(
-  (response) => response,
-  (error) => {
+  (response) => {
+    // Log successful responses for debugging
+    console.log(`Chat API Response [${response.config.method?.toUpperCase()}] ${response.config.url}:`, response.status);
+    return response;
+  },
+  async (error) => {
+    // Check if error is due to token expiration (401 Unauthorized)
+    if (error.response && error.response.status === 401) {
+      console.warn('Received 401 Unauthorized response in Chat API, attempting to refresh token');
+      
+      // Try to refresh the token
+      const refreshToken = localStorage.getItem('refreshToken');
+      if (refreshToken) {
+        try {
+          // Get the original request config
+          const originalRequest = error.config;
+          
+          // Call refresh token API
+          const response = await axios.post(`http://localhost:5019/api/Auth/refresh-token`, { refreshToken });
+          
+          // Update tokens in localStorage
+          if (response.data.token || response.data.accessToken) {
+            const newToken = response.data.token || response.data.accessToken;
+            localStorage.setItem('token', newToken);
+            if (response.data.refreshToken) {
+              localStorage.setItem('refreshToken', response.data.refreshToken);
+            }
+            
+            // Update the Authorization header with the new token
+            originalRequest.headers.Authorization = `Bearer ${newToken}`;
+            
+            // Retry the original request with the new token
+            return axios(originalRequest);
+          }
+        } catch (refreshError) {
+          console.error('Token refresh failed in Chat API:', refreshError);
+          // If refresh fails, redirect to login
+          window.location.href = '/login';
+        }
+      } else {
+        console.error('No refresh token available for Chat API');
+        // Redirect to login if no refresh token
+        window.location.href = '/login';
+      }
+    }
+    
+    // Handle other errors
     handleError(error);
     return Promise.reject(error);
   }
@@ -62,8 +114,20 @@ export const chatApi = {
   // Create a new chat session
   createSession: async (userId: string): Promise<AxiosResponse<Session>> => {
     try {
-      return await api.post('/session', { userId });
+      console.log('Creating chat session for user:', userId);
+      
+      // Check if token exists before making the request
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error('No token available for createSession request');
+        throw new Error('Authentication token is missing. Please log in again.');
+      }
+      
+      const response = await api.post('/session', { userId });
+      console.log('Create session response:', response.data);
+      return response;
     } catch (error) {
+      console.error('Create session error:', error);
       handleError(error);
       throw error;
     }
@@ -72,8 +136,20 @@ export const chatApi = {
   // Get a specific session by ID
   getSession: async (sessionId: string): Promise<AxiosResponse<SessionResponse>> => {
     try {
-      return await api.get(`/session/${sessionId}`);
+      console.log('Getting chat session:', sessionId);
+      
+      // Check if token exists before making the request
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error('No token available for getSession request');
+        throw new Error('Authentication token is missing. Please log in again.');
+      }
+      
+      const response = await api.get(`/session/${sessionId}`);
+      console.log('Get session response:', response.data);
+      return response;
     } catch (error) {
+      console.error('Get session error:', error);
       handleError(error);
       throw error;
     }
@@ -122,8 +198,20 @@ export const chatApi = {
   // Send a message in a session
   sendMessage: async (sessionId: string, prompt: string): Promise<AxiosResponse<Message>> => {
     try {
-      return await api.post(`/session/${sessionId}/messages`, { prompt });
+      console.log('Sending message in session:', sessionId, 'Prompt:', prompt);
+      
+      // Check if token exists before making the request
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error('No token available for sendMessage request');
+        throw new Error('Authentication token is missing. Please log in again.');
+      }
+      
+      const response = await api.post(`/session/${sessionId}/messages`, { prompt });
+      console.log('Send message response:', response.data);
+      return response;
     } catch (error) {
+      console.error('Send message error:', error);
       handleError(error);
       throw error;
     }
