@@ -30,7 +30,7 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, position, au
       <div className={`message-input-container ${position === 'center' ? 'center-position' : 'bottom-position'}`}>
          <IonInput
             ref={inputRef}
-            value={inputText}
+            value={inputText} 
             onIonInput={(e) => setInputText(e.detail.value || '')}
             onKeyUp={handleKeyPress}
             placeholder="Type your message here..."

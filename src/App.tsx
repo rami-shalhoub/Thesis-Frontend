@@ -2,6 +2,7 @@ import { Route } from 'react-router-dom';
 import { IonApp, IonRouterOutlet, setupIonicReact, IonModal } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { ChatProvider } from './contexts/ChatContext';
 import { useState } from 'react';
 
 /* Core CSS required for Ionic components to work properly */
@@ -110,11 +111,13 @@ const AppContent: React.FC = () => {
 };
 
 /**
- * Main App component that provides the AuthProvider context
+ * Main App component that provides the AuthProvider and ChatProvider contexts
  */
 const App: React.FC = () => (
    <AuthProvider>
-      <AppContent />
+      <ChatProvider>
+         <AppContent />
+      </ChatProvider>
    </AuthProvider>
 );
 

@@ -46,11 +46,12 @@ const BottomMenu: React.FC = () => {
 
                     {/* //& Routes for the Side Pan */}
                     <IonRouterOutlet id='main'>
-                        <Route exact path='/chat' component={Chat} />
+                        <Route exact path='/chat/' component={Chat} />
+                        <Route path='/chat/:sessionId' component={Chat} />
                         <Route path='/share' component={Share} />
                         <Route path='/settings' component={Settings} />
                         <Route exact path='/'>
-                            <Redirect to='/chat' />
+                           <Redirect to='/chat' />
                         </Route>
                     </IonRouterOutlet>
                 </IonTabs>
