@@ -1,19 +1,18 @@
-import { IonButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonCol, IonGrid, IonIcon, IonInput, IonPage, IonRow, useIonRouter } from '@ionic/react';
+import { IonButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonCol, IonGrid, IonIcon, IonInput, IonPage, IonRow, IonSelect, IonSelectOption, useIonRouter } from '@ionic/react';
 import { pencil, save, trashBin } from 'ionicons/icons';
 import './CSS/Settings.css';
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../contexts/AuthContext';
 import { useErrorHandler } from '../APIs/ErrorHandler';
 
 const Settings: React.FC = () => {
    const { user, updateUser, deleteUser, isAuthenticated } = useAuth();
    const { ErrorToastComponent, showToast } = useErrorHandler();
    const router = useIonRouter();
-   
+
    const [formData, setFormData] = useState({
       name: '',
       email: '',
-      password: '',
       organisationID: '',
       role: ''
    });
@@ -34,7 +33,6 @@ const Settings: React.FC = () => {
          setFormData({
             name: user.name,
             email: user.email,
-            password: '********', // Placeholder for password
             organisationID: user.organisationID,
             role: user.role
          });
@@ -110,48 +108,50 @@ const Settings: React.FC = () => {
                   <IonGrid>
                      <IonRow>
                         <IonCol>
-                           <IonInput 
-                              className="ion-margin-bottom" 
-                              labelPlacement='floating' 
-                              label='Organisation' 
-                              type='text' 
-                              fill='solid' 
-                              value={formData.organisationID} 
+                           <IonSelect
+                              value={formData.organisationID}
+                              interface="popover"
+                              placeholder="Organisation"
+                              onIonChange={(e) => handleChange('organisationID', e.detail.value)}
                               disabled={!isEditMode}
-                              onIonInput={(e) => handleChange('organisationID', e.detail.value || '')}
-                           ></IonInput>
+                              label='Organisation'
+                           >
+                              <IonSelectOption value="ClientOrgMSP">ClientOrg</IonSelectOption>
+                              <IonSelectOption value="LawfirmOrgMSP">LawFirmOrg</IonSelectOption>
+                              <IonSelectOption value="RetailOrgMSP">RetailOrg</IonSelectOption>
+                           </IonSelect>
                         </IonCol>
                         <IonCol>
-                           <IonInput 
-                              className='ion-margin-bottom' 
-                              label='Role' 
-                              labelPlacement='floating' 
-                              type='text' 
-                              fill='solid' 
-                              value={formData.role} 
-                              disabled={true} 
+                           <IonInput
+                              className='ion-margin-bottom'
+                              label='Role'
+                              labelPlacement='floating'
+                              type='text'
+                              fill='solid'
+                              value={formData.role}
+                              disabled={true}
                               color='danger'
                            ></IonInput>
                         </IonCol>
                      </IonRow>
                      <IonRow>
-                        <IonInput 
-                           className="ion-margin-botoom" 
-                           labelPlacement='floating' 
-                           label='User Name' 
-                           type='text' 
-                           fill='solid' 
-                           value={formData.name} 
+                        <IonInput
+                           className="ion-margin-botoom"
+                           labelPlacement='floating'
+                           label='User Name'
+                           type='text'
+                           fill='solid'
+                           value={formData.name}
                            disabled={!isEditMode}
                            onIonInput={(e) => handleChange('name', e.detail.value || '')}
                         ></IonInput>
-                        <IonInput 
-                           className="ion-margin-top" 
-                           labelPlacement='floating' 
-                           label='Email' 
-                           type='email' 
-                           fill='solid' 
-                           value={formData.email} 
+                        <IonInput
+                           className="ion-margin-top"
+                           labelPlacement='floating'
+                           label='Email'
+                           type='email'
+                           fill='solid'
+                           value={formData.email}
                            disabled={!isEditMode}
                            onIonInput={(e) => handleChange('email', e.detail.value || '')}
                         ></IonInput>
@@ -169,18 +169,18 @@ const Settings: React.FC = () => {
                      </IonRow>
                      <IonRow>
                         <IonCol>
-                           <IonButton 
-                              type='button' 
-                              className="ion-margin-top" 
+                           <IonButton
+                              type='button'
+                              className="ion-margin-top"
                               style={{ display: isEditMode ? 'none' : 'inline-flex' }}
                               onClick={handleEditClick}
                            >
                               Edit
                               <IonIcon icon={pencil} slot='end' />
                            </IonButton>
-                           <IonButton 
-                              type='button' 
-                              className="ion-margin-top" 
+                           <IonButton
+                              type='button'
+                              className="ion-margin-top"
                               style={{ display: isEditMode ? 'inline-flex' : 'none' }}
                               onClick={handleSaveClick}
                               disabled={isLoading}
@@ -190,11 +190,11 @@ const Settings: React.FC = () => {
                            </IonButton>
                         </IonCol>
                         <IonCol offset='8'>
-                           <IonButton 
-                              type='button' 
-                              expand='block' 
-                              className="ion-margin-top" 
-                              color='danger' 
+                           <IonButton
+                              type='button'
+                              expand='block'
+                              className="ion-margin-top"
+                              color='danger'
                               disabled={isEditMode || isDeleting}
                               onClick={handleDeleteAccount}
                            >

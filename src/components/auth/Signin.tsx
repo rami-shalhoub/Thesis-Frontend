@@ -1,7 +1,7 @@
 import { IonButton, IonCardContent, IonCol, IonGrid, IonIcon, IonInput, IonInputPasswordToggle, IonRow } from '@ionic/react';
 import { logInOutline } from 'ionicons/icons';
 import React, { useState } from 'react';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { useErrorHandler } from '../../APIs/ErrorHandler';
 
 
@@ -14,7 +14,7 @@ const Signin: React.FC = () => {
 
    const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
-      
+
       if (!email || !password) {
          showToast('Please enter both email and password');
          return;
@@ -23,7 +23,7 @@ const Signin: React.FC = () => {
       setIsLoading(true);
       try {
          await login(email, password);
-         
+
          // Close the modal after successful login
          const modal = document.querySelector('ion-modal');
          if (modal) {
@@ -43,21 +43,21 @@ const Signin: React.FC = () => {
                <IonRow class="ion-justify-content-center">
                   <IonCol>
                      <form onSubmit={handleSubmit}>
-                        <IonInput 
-                           labelPlacement='floating' 
-                           label='Email' 
-                           type='email' 
-                           placeholder='email@example.com' 
+                        <IonInput
+                           labelPlacement='floating'
+                           label='Email'
+                           type='email'
+                           placeholder='email@example.com'
                            fill='outline'
                            value={email}
                            onIonInput={(e) => setEmail(e.detail.value || '')}
                            required
                         ></IonInput>
-                        <IonInput 
-                           className="ion-margin-top" 
-                           labelPlacement='floating' 
-                           label='Password' 
-                           type='password' 
+                        <IonInput
+                           className="ion-margin-top"
+                           labelPlacement='floating'
+                           label='Password'
+                           type='password'
                            fill='outline'
                            value={password}
                            onIonInput={(e) => setPassword(e.detail.value || '')}
@@ -65,9 +65,9 @@ const Signin: React.FC = () => {
                         >
                            <IonInputPasswordToggle slot="end"></IonInputPasswordToggle>
                         </IonInput>
-                        <IonButton 
-                           type='submit' 
-                           expand='block' 
+                        <IonButton
+                           type='submit'
+                           expand='block'
                            className="ion-margin-top"
                            disabled={isLoading}
                         >

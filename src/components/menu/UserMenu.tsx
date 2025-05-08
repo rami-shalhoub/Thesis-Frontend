@@ -2,7 +2,7 @@ import { IonButton, IonIcon, IonMenuToggle, IonPopover } from '@ionic/react';
 import { personCircle, settings, logOutOutline } from 'ionicons/icons';
 import React from 'react';
 import LoginModal from '../auth/LoginModal';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
 
 const UserMenu: React.FC = () => {
    const { isAuthenticated, user, logout } = useAuth();
@@ -25,7 +25,7 @@ const UserMenu: React.FC = () => {
                <LoginModal triggerID='open-login-modal'></LoginModal>
             </IonButton>
          )}
-         
+
          {/* Show User menu when authenticated */}
          {isAuthenticated && user && (
             <>

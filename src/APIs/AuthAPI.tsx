@@ -49,9 +49,9 @@ export interface RefreshTokenRequest {
 }
 
 export interface UpdateUserRequest {
-   email: string;
-   name: string;
-   organisationID: string;
+   email?: string;
+   name?: string;
+   organisationID?: string;
 }
 
 // Create axios instance with base configuration
