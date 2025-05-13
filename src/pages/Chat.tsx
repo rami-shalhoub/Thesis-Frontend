@@ -29,8 +29,8 @@ interface UIMessage {
 }
 
 const Chat: React.FC = () => {
-   //  const { sessionId } = useParams<ChatParams>();
-   const sessionId = '57b2db74-f376-4861-8248-62eede151b72'; // Hardcoded for testing
+    const { sessionId } = useParams<ChatParams>();
+   // const sessionId = '57b2db74-f376-4861-8248-62eede151b72'; // Hardcoded for testing
     const history = useHistory();
     const { user } = useAuth();
     const { 
